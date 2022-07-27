@@ -14,7 +14,8 @@ import (
 type User struct {
 	ID        	uint `json:"id" gorm:"primaryKey"`
 	Name 		string `json:"name" validate:"required,min=2"`
-	Email 		string `json:"email"`
+	Email 		string `json:"email" validate:"required,email"`
+	Password 	string `json:"password" validate:"required"`
 	Address 	string `json:"address"`
 	Phone 		string `json:"phone"`
 	CreatedAt 	time.Time `json:"created_at"`

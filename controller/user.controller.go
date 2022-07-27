@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/go-playground/validator/v10"
@@ -8,6 +9,7 @@ import (
 	"github.com/samsul-rijal/go-api/config/database"
 	"github.com/samsul-rijal/go-api/model/entity"
 	"github.com/samsul-rijal/go-api/model/request"
+	"github.com/samsul-rijal/go-api/utils"
 )
 
 func UserControllerGetAll(ctx *fiber.Ctx) error {
@@ -42,6 +44,16 @@ func UserControllerCreate(ctx *fiber.Ctx) error {
 		Address: user.Address,
 		Phone: user.Phone,
 	}
+
+	hashedPassword, err := utils.HashingPassword(user.Password)
+	if err != nil {
+		log.Println(err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message":"internal server error",
+		})
+	}
+
+	newUser.Password = hashedPassword
 
 	errCreateUser := database.DB.Debug().Create(&newUser).Error
 
@@ -130,7 +142,7 @@ func UserControllerDelete(ctx *fiber.Ctx) error {
 	
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
-			"message":"user not found",
+			"message": fmt.Sprintf("user %s was deleted",userId),
 		})
 	}
 
@@ -142,6 +154,6 @@ func UserControllerDelete(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(fiber.Map{
-		"message":"user was deleted",
+		"message": fmt.Sprintf("user %s was deleted",userId),
 	})
 }
