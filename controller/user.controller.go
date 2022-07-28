@@ -13,6 +13,10 @@ import (
 )
 
 func UserControllerGetAll(ctx *fiber.Ctx) error {
+	// get payload token
+	userInfo := ctx.Locals("userInfo")
+	log.Println("user info data :: ", userInfo)
+
 	var users []entity.User
 	result := database.DB.Debug().Find(&users)
 

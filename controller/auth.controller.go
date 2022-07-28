@@ -53,6 +53,12 @@ func LoginController(ctx *fiber.Ctx) error {
 	claims["address"] = user.Address
 	claims["exp"] = time.Now().Add(time.Minute * 2).Unix() // 2 menit expired
 
+	if user.Email == "admin@mail.com" {
+		claims["role"] = "admin"
+	} else {
+		claims["role"] = "user"
+	}
+
 	token, errGenerateToken := utils.GenerateToken(&claims)
 	if errGenerateToken != nil{
 		log.Println(errGenerateToken)
